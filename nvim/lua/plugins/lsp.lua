@@ -1,6 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
+
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
     },
@@ -8,6 +9,33 @@ return {
     config = function()
       local capabilities =
         require("cmp_nvim_lsp").default_capabilities()
+
+      vim.diagnostic.config({
+        virtual_text = false,
+        signs = false,
+        underline = false,
+        severity_sort = false,
+
+        float = {
+          border = "rounded",
+          source = "always",
+          header = "",
+          prefix = "",
+        },
+      })
+
+      vim.api.nvim_create_user_command("DiagnosticsToggle", function()
+        local config = vim.diagnostic.config()
+
+        vim.diagnostic.config({
+          virtual_text = not config.virtual_text,
+          signs = not config.signs,
+          underline = not config.underline,
+          severity_sort = not config.severity_sort,
+        })
+      end, {
+        desc = "Toggle diagnostic show",
+      })
 
       vim.lsp.config("lua_ls", {
         capabilities = capabilities,
@@ -20,7 +48,7 @@ return {
 
             hint = {
               enable = true,
-              semicolon = "Disable",
+              semicolon = "Enable",
             },
           },
         },
@@ -37,7 +65,6 @@ return {
           python = {
             analysis = {
               autoSearchPaths = true,
-              diagnosticMode = "openFilesOnly",
               useLibraryCodeForTypes = true,
             },
           },
